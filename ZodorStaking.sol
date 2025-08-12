@@ -59,10 +59,10 @@ contract ZodorStaking is ReentrancyGuard, Pausable, Ownable {
         require(initialOwner != address(0), "Invalid owner address");
 
         zodToken = IERC20(_zodToken);
-        plans[0] = Plan(1, 1000);
-        plans[1] = Plan(2, 3000);
-        plans[2] = Plan(5, 7000);
-        plans[3] = Plan(10, 10000);
+        plans[0] = Plan(64800, 100);
+        plans[1] = Plan(129600, 300);
+        plans[2] = Plan(259200, 700);
+        plans[3] = Plan(525600, 1800);
     }
 
     function stake(uint8 planId, uint256 amount)
