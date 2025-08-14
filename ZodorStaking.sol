@@ -5,10 +5,10 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/access/Ownable2Step.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 
-contract ZodorStaking is ReentrancyGuard, Pausable, Ownable {
+contract ZodorStaking is ReentrancyGuard, Pausable, Ownable2Step {
     using SafeERC20 for IERC20;
 
     IERC20 public immutable zodToken;
@@ -131,7 +131,7 @@ contract ZodorStaking is ReentrancyGuard, Pausable, Ownable {
 
         if (refundMode) {
             require(
-                refundActivationTime > pos.startTimestamp,
+                refundActivationTime >= pos.startTimestamp,
                 "Refund before stake"
             );
 
@@ -150,7 +150,7 @@ contract ZodorStaking is ReentrancyGuard, Pausable, Ownable {
                     : 0;
             }
 
-            reward = (fullReward * elapsedSeconds) / durationSeconds;
+            reward = Math.mulDiv(fullReward, elapsedSeconds, durationSeconds);
 
             if (fullReward > reward) {
                 uint256 unusedReward = fullReward - reward;
@@ -245,7 +245,7 @@ contract ZodorStaking is ReentrancyGuard, Pausable, Ownable {
                     : 0;
             }
 
-            return (fullReward * elapsedSeconds) / durationSeconds;
+            return Math.mulDiv(fullReward, elapsedSeconds, durationSeconds);
         } else {
             if (
                 block.timestamp < pos.startTimestamp + plan.durationMinutes * 60
